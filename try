@@ -1,0 +1,20 @@
+import numpy as np 
+
+
+def f(x):
+    y = 1
+    return y 
+
+def f_prime(x):
+    y_prime = 1
+    return y_prime 
+
+
+def NR(x0, f, f_prime): 
+    x = []
+    x[0] = x0; 
+    ea = 1 
+    
+    while ea > 10**-5: 
+        
+        
