@@ -1,20 +1,54 @@
-import numpy as np 
+### The following 4 functions are single-iteration root finding methods
+def NR(x, f, f_prime): 
+    return x - f(x)/f_prime(x)
+    
+def NR_mod(x, f, f_prime, f_dprime): 
+    return x - f(x)*f_prime(x)/(f_prime(x)**2 - f(x)*f_dprime(x))
+    
+def secant(x1, x2, f): 
+    return x2 - f(x2)*(x1 - x2)/(f(x1) - f(x2))
+    
+def secant_mod(x1, x2, f, f_prime):
+    return x2 - (f(x2)/f_prime(x2))*(f(x2)*(x1 - x2)/((f(x1)/f_prime(x1)) - (f(x2)/f_prime(x2))))
 
-
-def f(x):
-    y = 1
-    return y 
-
-def f_prime(x):
-    y_prime = 1
-    return y_prime 
-
-
-def NR(x0, f, f_prime): 
+### The following two functions are multi-iteration and combined root finding methods 
+def single_root(x0, f, f_prime): 
     x = []
     x[0] = x0; 
     ea = 1 
     
+    i = 0 
+    while ea > 10**-5: 
+            
+        if f(x[i]) =! 0: #Raltson and Rabonowitz theoretically demonstrated that f(x) goes to zero faster then f'(x) 
+            x[i+1] = NR(x[i],f, f_prime)
+        elif f(x[i]) == 0:
+            x[i+1] = secant(x[i-1], x[i], f)          
+                 
+        ea = abs((x[i+1] - x[i])/x[i+1])
+        
+    return x 
+    
+def multi_root(x0, m, f, f_prime, f_doubleprime): 
+    x = []
+    x[0] = x0; 
+    ea = 1 
+    
+    i = 0 
     while ea > 10**-5: 
         
+        if f(x[i]) =! 0: #Raltson and Rabonowitz theoretically demonstrated that f(x) goes to zero faster then f'(x) 
+            x[i+1] = NR(x[i],f, f_prime)
+        elif f(x[i]) == 0:
+            x[i+1] = NR_mod(x[i],f, f_prime, f_dprime)
+            
+        ea = abs((x[i+1] - x[i])/x[i+1])
         
+    return x 
+        
+########################################################################################################################
+if __name__ == "__main__":
+
+    
+        
+     
