@@ -9,7 +9,7 @@ and an initial guess.
 """
 
 ### The following 4 functions are single-iteration root finding methods
-def NR(x, f, f_prime): 
+def NR(x, f, f_prime, m): 
     return x - f(x)/f_prime(x)
     
 def NR_mod(x, f, f_prime, f_doubleprime): 
@@ -41,22 +41,28 @@ def single_root(x0, f, f_prime):
     return x 
     
 def multi_root(x0, m, f, f_prime, f_doubleprime): 
-    x = []
-    x.append(x0) 
-    ea = 1 
+    root = []
     
-    i = 0 
-    while ea > 10**-5: 
+    for multi in range(m):
+        x = []
+        x.append(x0[multi]) 
+        ea = 1 
         
-        if f(x[i]) != 0: #Raltson and Rabonowitz theoretically demonstrated that f(x) goes to zero faster then f'(x) 
-            x.append(NR(x[i],f, f_doubleprime))
-        elif f(x[i]) == 0:
-            x.append(NR_mod(x[i],f, f_prime, f_doubleprime))
+        i = 0 
+        while ea > 10**-5: 
             
-        ea = abs((x[i+1] - x[i])/x[i+1])
+            if f(x[i]) != 0: #Raltson and Rabonowitz theoretically demonstrated that f(x) goes to zero faster then f'(x) 
+                x.append(NR(x[i],f, f_prime))
+            elif f(x[i]) ==0 :
+                x.append(NR_mod(x[i],f, f_prime, f_doubleprime))
+            
+                
+            ea = abs((x[i+1] - x[i])/x[i+1])
+            i += 1 
+        root.append(x[-1])
         
-    return x 
-        
+    return root
+                
 ########################################################################################################################
 if __name__ == "__main__":
     
@@ -73,5 +79,12 @@ if __name__ == "__main__":
     pisa_root = single_root(1,f1, fp1)
     print(pisa_root[-1])
     
+    # Example 2: Testing of the Multi-root Method 
+    f2 = lambda x: 2*x**2 - 3 
+    fp2 = lambda x: 4*x 
+    fdp2 = lambda x: 4
+    
+    roots = multi_root([1,-1], 2, f2, fp2, fdp2)
+    print(roots)
     
      
