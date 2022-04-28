@@ -1,0 +1,77 @@
+"""
+M. Catherine Yopp - 28 April 2022 
+MA 348 - Final Project 
+
+The following code allows the user to find 
+the root(s) of a function with the knowledge 
+of the function's first two derivatives
+and an initial guess. 
+"""
+
+### The following 4 functions are single-iteration root finding methods
+def NR(x, f, f_prime): 
+    return x - f(x)/f_prime(x)
+    
+def NR_mod(x, f, f_prime, f_doubleprime): 
+    return x - f(x)*f_prime(x)/(f_prime(x)**2 - f(x)*f_doubleprime(x))
+    
+def secant(x1, x2, f): 
+    return x2 - f(x2)*(x1 - x2)/(f(x1) - f(x2))
+    
+def secant_mod(x1, x2, f, f_prime):
+    return x2 - (f(x2)/f_prime(x2))*(f(x2)*(x1 - x2)/((f(x1)/f_prime(x1)) - (f(x2)/f_prime(x2))))
+
+### The following two functions are multi-iteration and combined root finding methods 
+def single_root(x0, f, f_prime): 
+    x = []
+    x.append(x0) 
+    ea = 1 
+    
+    i = 0 
+    while ea > 10**-5: 
+            
+        if f(x[i]) != 0: #Raltson and Rabonowitz theoretically demonstrated that f(x) goes to zero faster then f'(x) 
+            x.append( NR(x[i],f, f_prime))
+        elif f(x[i]) == 0:
+            x.append(secant(x[i-1], x[i], f))
+                 
+        ea = abs((x[i+1] - x[i])/x[i+1])
+        i += 1
+        
+    return x 
+    
+def multi_root(x0, m, f, f_prime, f_doubleprime): 
+    x = []
+    x.append(x0) 
+    ea = 1 
+    
+    i = 0 
+    while ea > 10**-5: 
+        
+        if f(x[i]) != 0: #Raltson and Rabonowitz theoretically demonstrated that f(x) goes to zero faster then f'(x) 
+            x.append(NR(x[i],f, f_doubleprime))
+        elif f(x[i]) == 0:
+            x.append(NR_mod(x[i],f, f_prime, f_doubleprime))
+            
+        ea = abs((x[i+1] - x[i])/x[i+1])
+        
+    return x 
+        
+########################################################################################################################
+if __name__ == "__main__":
+    
+    '''
+    Defining the function and derivative for 
+    Leonardo de Pisa's polynomial: 
+    $x^3 + 2x^2 + 10x - 20$ 
+    whose root is 1.368808107
+    '''
+    f1 = lambda x: x**3 + 2*x**2 + 10*x - 20 
+    fp1 = lambda x: 3*x**2 + 4*x + 10
+    fdp1 = lambda x: 6*x + 4
+    
+    pisa_root = single_root(1,f1, fp1)
+    print(root)
+    
+    
+     
