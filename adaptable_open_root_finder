@@ -71,7 +71,7 @@ if __name__ == "__main__":
     fdp1 = lambda x: 6*x + 4
     
     pisa_root = single_root(1,f1, fp1)
-    print(root)
+    print(pisa_root)
     
     
      
