@@ -1,4 +1,5 @@
 from numpy import * 
+
 """
 
 """
@@ -40,7 +41,7 @@ def NR_mod_iters(x0, f, f_prime, f_doubleprime):
     
     i = 0 
     while ea > 10**-5: 
-        #x.append( NR_mod(x[i],f, f_prime, f_doubleprime))
+      
         if f(x[i]) != 0: #Raltson and Rabonowitz theoretically demonstrated that f(x) goes to zero faster then f'(x) 
            x.append( NR_mod(x[i],f, f_prime, f_doubleprime))
         elif f(x[i]) == 0:
@@ -68,7 +69,7 @@ def secant_iters(x0, x1, f):
 
     return x 
 
-def secant_mod_iters(x0, x1, f):
+def secant_mod_iters(x0, x1, f, f_prime):
     x = []
     x.append(x0) 
     x.append(x1)
@@ -76,7 +77,7 @@ def secant_mod_iters(x0, x1, f):
     
     i = 0 
     while ea > 10**-5: 
-        x.append(secant(x0, x1, f))
+        x.append(secant_mod(x0, x1, f, f_prime))
 
         ea = abs((x[i+1] - x[i])/x[i+1])
         i += 1
@@ -103,7 +104,7 @@ def single_root(x0, f, f_prime):
         
     return x 
     
-def multi_root(x0, num_of_roots, f, f_prime, f_doubleprime): 
+def odd_multi_root(x0, num_of_roots, f, f_prime, f_doubleprime): 
     root = []
     
     for roots in range(num_of_roots):
@@ -167,31 +168,40 @@ if __name__ == "__main__":
     pisa_root = single_root(1,f, fp)
     print(pisa_root[-1])
     
-    # # Example 2: Multiply roots with odd multiplicity 
+    # Example 2: Multiply roots with odd multiplicity 
     f = lambda x: .5*exp(x) - 5*x + 2
     fp = lambda x: .5*exp(x) - 5 
     fdp = lambda x: .5*exp(x)
     
-    roots = multi_root([0,2.5], 2, f, fp, fdp)
+    roots = odd_multi_root([0,2.5], 2, f, fp, fdp)
     print(roots)
     
-    # # Example 3: Even multiplicity
+    # Example 3: Even multiplicity
     f = lambda x: x**4 + 2*x**3 - 3*x**2 - 4*x + 4 
     fp = lambda x: 4*x**3 + 6*x**2 - 6*x - 4 
     fdp = lambda x: 12*x**2 + 12*x - 6 
     even_roots = even_multi_root([-1.88, 1.88, 1.6, -2.3], [2,2, 2, 2], 4, f, fp, fdp)
     print(even_roots)
     
-    # Example 4: The mixing of methods 
+    # Example 4: The mixing of methods & NR vs NR Modified  
     
     f = lambda x: x**2 + 5*x + 6.25 
     fp = lambda x: 2*x + 5 
     fdp = lambda x: 2
     
+    nr = NR_iters(-1, f, fp)
     nr_mod = NR_mod_iters(-1, f, fp, fdp)
     
-    # Example 5: NR vs NR Modified 
+    # Example 5: Secant vs Modified Secant 
     
+    f = lambda x: x**5 + 12*x**4 - 13*x 
+    fp = lambda x: 5*x**4 + 48*x**3 - 13 
+    fdp = lambda x: 20*x**3 + 144*x**2 
+    
+    s = secant_iters(-10, -11, f)
+    s_mod = secant_mod_iters(-10, -11, f, fp)
+
+    # Example 6: Convergence 
     
     
     
