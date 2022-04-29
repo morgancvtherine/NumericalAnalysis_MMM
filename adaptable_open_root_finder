@@ -160,35 +160,35 @@ if __name__ == "__main__":
     $x^3 + 2x^2 + 10x - 20$ 
     whose root is 1.368808107
     '''
-    # f = lambda x: x**3 + 2*x**2 + 10*x - 20 
-    # fp = lambda x: 3*x**2 + 4*x + 10
-    # fdp = lambda x: 6*x + 4
+    f = lambda x: x**3 + 2*x**2 + 10*x - 20 
+    fp = lambda x: 3*x**2 + 4*x + 10
+    fdp = lambda x: 6*x + 4
     
-    # pisa_root = single_root(1,f, fp)
-    # print(pisa_root[-1])
+    pisa_root = single_root(1,f, fp)
+    print(pisa_root[-1])
     
     # # Example 2: Multiply roots with odd multiplicity 
-    # f = lambda x: .5*np.exp(x) - 5*x + 2
-    # fp = lambda x: .5*np.exp(x) - 5 
-    # fdp = lambda x: .5*np.exp(x)
+    f = lambda x: .5*exp(x) - 5*x + 2
+    fp = lambda x: .5*exp(x) - 5 
+    fdp = lambda x: .5*exp(x)
     
-    # roots = multi_root([0,2.5], 2, f, fp, fdp)
-    # print(roots)
+    roots = multi_root([0,2.5], 2, f, fp, fdp)
+    print(roots)
     
     # # Example 3: Even multiplicity
-    # f = lambda x: x**4 + 2*x**3 - 3*x**2 - 4*x + 4 
-    # fp = lambda x: 4*x**3 + 6*x**2 - 6*x - 4 
-    # fdp = lambda x: 12*x**2 + 12*x - 6 
-    # even_roots = even_multi_root([-1.88, 1.88, 1.6, -2.3], [2,2, 2, 2], 4, f, fp, fdp)
-    # print(even_roots)
+    f = lambda x: x**4 + 2*x**3 - 3*x**2 - 4*x + 4 
+    fp = lambda x: 4*x**3 + 6*x**2 - 6*x - 4 
+    fdp = lambda x: 12*x**2 + 12*x - 6 
+    even_roots = even_multi_root([-1.88, 1.88, 1.6, -2.3], [2,2, 2, 2], 4, f, fp, fdp)
+    print(even_roots)
     
     # Example 4: The mixing of methods 
     
-    # f = lambda x: x**2 + 5*x + 6.25 
-    # fp = lambda x: 2*x + 5 
-    # fdp = lambda x: 2
+    f = lambda x: x**2 + 5*x + 6.25 
+    fp = lambda x: 2*x + 5 
+    fdp = lambda x: 2
     
-    # nr_mod = NR_mod_iters(-1, f, fp, fdp)
+    nr_mod = NR_mod_iters(-1, f, fp, fdp)
     
     # Example 5: NR vs NR Modified 
     
