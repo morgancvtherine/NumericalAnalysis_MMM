@@ -1,4 +1,4 @@
-import numpy as np 
+from numpy import * 
 """
 
 """
@@ -17,6 +17,73 @@ def secant_mod(x1, x2, f, f_prime):
     return x2 - (f(x2)/f_prime(x2))*(f(x2)*(x1 - x2)/((f(x1)/f_prime(x1)) - (f(x2)/f_prime(x2))))
 
 ### The following two functions are multi-iteration and combined root finding methods 
+def NR_iters(x0, f, f_prime):
+    x = []
+    x.append(x0) 
+    ea = 1 
+    
+    i = 0 
+    while ea > 10**-5: 
+        x.append( NR(x[i],f, f_prime))
+
+        ea = abs((x[i+1] - x[i])/x[i+1])
+        i += 1
+    
+    print("It took ", i, " iterations to reach the value ", x[-1])
+
+    return x 
+
+def NR_mod_iters(x0, f, f_prime, f_doubleprime):
+    x = []
+    x.append(x0) 
+    ea = 1 
+    
+    i = 0 
+    while ea > 10**-5: 
+        #x.append( NR_mod(x[i],f, f_prime, f_doubleprime))
+        if f(x[i]) != 0: #Raltson and Rabonowitz theoretically demonstrated that f(x) goes to zero faster then f'(x) 
+           x.append( NR_mod(x[i],f, f_prime, f_doubleprime))
+        elif f(x[i]) == 0:
+            x.append(secant(x[i-1], x[i], f))
+            print("Had to switch to secant after ", i, "iterations ")
+        ea = abs((x[i+1] - x[i])/x[i+1])
+        i += 1
+    print("It took ", i, " iterations to reach the value ", x[-1])
+        
+    return x 
+
+def secant_iters(x0, x1, f):
+    x = []
+    x.append(x0) 
+    x.append(x1)
+    ea = 1 
+    
+    i = 0 
+    while ea > 10**-5: 
+        x.append(secant(x0, x1, f))
+
+        ea = abs((x[i+1] - x[i])/x[i+1])
+        i += 1
+    print("It took ", i, " iterations to reach the value ", x[-1])
+
+    return x 
+
+def secant_mod_iters(x0, x1, f):
+    x = []
+    x.append(x0) 
+    x.append(x1)
+    ea = 1 
+    
+    i = 0 
+    while ea > 10**-5: 
+        x.append(secant(x0, x1, f))
+
+        ea = abs((x[i+1] - x[i])/x[i+1])
+        i += 1
+    print("It took ", i, " iterations to reach the value ", x[-1])
+    return x 
+
+
 def single_root(x0, f, f_prime): 
     x = []
     x.append(x0) 
@@ -93,28 +160,38 @@ if __name__ == "__main__":
     $x^3 + 2x^2 + 10x - 20$ 
     whose root is 1.368808107
     '''
-    f = lambda x: x**3 + 2*x**2 + 10*x - 20 
-    fp = lambda x: 3*x**2 + 4*x + 10
-    fdp = lambda x: 6*x + 4
+    # f = lambda x: x**3 + 2*x**2 + 10*x - 20 
+    # fp = lambda x: 3*x**2 + 4*x + 10
+    # fdp = lambda x: 6*x + 4
     
-    pisa_root = single_root(1,f, fp)
-    print(pisa_root[-1])
+    # pisa_root = single_root(1,f, fp)
+    # print(pisa_root[-1])
     
-    # Example 2: Multiply roots with odd multiplicity 
-    f = lambda x: 2*x**2 - 3 
-    fp = lambda x: 4*x 
-    fdp = lambda x: 4
+    # # Example 2: Multiply roots with odd multiplicity 
+    # f = lambda x: .5*np.exp(x) - 5*x + 2
+    # fp = lambda x: .5*np.exp(x) - 5 
+    # fdp = lambda x: .5*np.exp(x)
     
-    roots = multi_root([1,-1], 2, f, fp, fdp)
-    print(roots)
+    # roots = multi_root([0,2.5], 2, f, fp, fdp)
+    # print(roots)
     
-    # Example 3: Even multiplicity
-    f = lambda x: x**4 + 2*x**3 - 3*x**2 - 4*x + 4 
-    fp = lambda x: 4*x**3 + 6*x**2 - 6*x - 4 
-    fdp = lambda x: 12*x**2 + 12*x - 6 
-    even_roots = even_multi_root([-1.88, 1.88, 1.6, -2.3], [2,2, 2, 2], 4, f, fp, fdp)
-    print(even_roots)
+    # # Example 3: Even multiplicity
+    # f = lambda x: x**4 + 2*x**3 - 3*x**2 - 4*x + 4 
+    # fp = lambda x: 4*x**3 + 6*x**2 - 6*x - 4 
+    # fdp = lambda x: 12*x**2 + 12*x - 6 
+    # even_roots = even_multi_root([-1.88, 1.88, 1.6, -2.3], [2,2, 2, 2], 4, f, fp, fdp)
+    # print(even_roots)
     
-    # Example 4: NR vs NR modified 
+    # Example 4: The mixing of methods 
+    
+    # f = lambda x: x**2 + 5*x + 6.25 
+    # fp = lambda x: 2*x + 5 
+    # fdp = lambda x: 2
+    
+    # nr_mod = NR_mod_iters(-1, f, fp, fdp)
+    
+    # Example 5: NR vs NR Modified 
+    
+    
     
     
