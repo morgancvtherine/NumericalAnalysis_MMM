@@ -1,10 +1,16 @@
 from numpy import * 
+import matplotlib.pyplot as plt 
+"""
+M. Catherine Yopp - 29 April 2022 
+MA 348 Numerical Analysis - Final Project 
+Teammates: Marissa Murphy & Kaitlyn Colaw 
 
+This script explores the efficiency of certain open
+methods both on their own and combined to prevent 
+the error of dividing by zero.
 """
 
-"""
-
-### The following 4 functions are single-iteration root finding methods
+"The following 4 functions are single-iteration root finding methods"
 def NR(x, f, f_prime): 
     return x - f(x)/f_prime(x)
     
@@ -17,7 +23,11 @@ def secant(x1, x2, f):
 def secant_mod(x1, x2, f, f_prime):
     return x2 - (f(x2)/f_prime(x2))*(f(x2)*(x1 - x2)/((f(x1)/f_prime(x1)) - (f(x2)/f_prime(x2))))
 
-### The following two functions are multi-iteration and combined root finding methods 
+"""
+The following two functions are multi-iteration and combined root finding methods.
+The stopping condition for the iterations is an error approximation less than 
+or equal to 10^-5. 
+"""
 def NR_iters(x0, f, f_prime):
     x = []
     x.append(x0) 
@@ -146,6 +156,7 @@ def even_multi_root(x0, m, num_of_roots, f, f_prime, f_doubleprime):
                 
             ea = abs((x[i+1] - x[i])/x[i+1])
             i += 1 
+        print("It took ",i, "iterations to get ", x[-1])
         root.append(x[-1])
         
     return root
@@ -154,10 +165,11 @@ def even_multi_root(x0, m, num_of_roots, f, f_prime, f_doubleprime):
 ########################################################################################################################
 if __name__ == "__main__":
     
-    # Example 1: Proof of function 
+  
     '''
-    Defining the function and derivative for 
-    Leonardo de Pisa's polynomial: 
+    Example 1: 
+    
+    Fibonacci's Cubic: 
     $x^3 + 2x^2 + 10x - 20$ 
     whose root is 1.368808107
     '''
@@ -168,7 +180,12 @@ if __name__ == "__main__":
     pisa_root = single_root(1,f, fp)
     print(pisa_root[-1])
     
-    # Example 2: Multiply roots with odd multiplicity 
+    """
+    Example 2: Multiple roots with odd multiplicity 
+    
+    $.5e^x - 5x = 2$ 
+    with roots 0.578 and 3.402         
+    """
     f = lambda x: .5*exp(x) - 5*x + 2
     fp = lambda x: .5*exp(x) - 5 
     fdp = lambda x: .5*exp(x)
@@ -176,15 +193,25 @@ if __name__ == "__main__":
     roots = odd_multi_root([0,2.5], 2, f, fp, fdp)
     print(roots)
     
-    # Example 3: Even multiplicity
+    """
+    Example 3: Multiple roots with even multiplicity
+    
+    $(x+2)^2 * (x-1)^2$
+    with roots -2 and 1 
+    """
     f = lambda x: x**4 + 2*x**3 - 3*x**2 - 4*x + 4 
     fp = lambda x: 4*x**3 + 6*x**2 - 6*x - 4 
     fdp = lambda x: 12*x**2 + 12*x - 6 
-    even_roots = even_multi_root([-1.88, 1.88, 1.6, -2.3], [2,2, 2, 2], 4, f, fp, fdp)
+    even_roots = even_multi_root([-1.88, 1.88, 1.6, -2.3], [2, 2, 2, 2], 4, f, fp, fdp)
     print(even_roots)
-    
-    # Example 4: The mixing of methods & NR vs NR Modified  
-    
+     
+    """
+    Example 4: The mixing of NR modified with secant and 
+               comparing NR modified to NR 
+              
+    $x^2 + 5x + 6.25$
+    with root -2.5 
+    """
     f = lambda x: x**2 + 5*x + 6.25 
     fp = lambda x: 2*x + 5 
     fdp = lambda x: 2
@@ -192,16 +219,74 @@ if __name__ == "__main__":
     nr = NR_iters(-1, f, fp)
     nr_mod = NR_mod_iters(-1, f, fp, fdp)
     
-    # Example 5: Secant vs Modified Secant 
+    """
+    Example 5: Secant method vs Modified secant method 
     
+    $x^5 + 12x^4 - 13x$ 
+    focusing on the root -12.008
+    """    
     f = lambda x: x**5 + 12*x**4 - 13*x 
     fp = lambda x: 5*x**4 + 48*x**3 - 13 
     fdp = lambda x: 20*x**3 + 144*x**2 
     
-    s = secant_iters(-10, -11, f)
-    s_mod = secant_mod_iters(-10, -11, f, fp)
-
-    # Example 6: Convergence 
+    s = secant_iters(-11, -11.5, f)
+    s_mod = secant_mod_iters(-11, -11.5, f, fp)
+ 
+    """
+    Example 6: The convergence of NR with and without multiplicity considered 
+    $(x-2)^3$ 
+    with root 2 
+    """
+    f = lambda x: (x-2)**3 
+    f_prime = lambda x: 3*(x-2)**2
+    f_doubleprime = lambda x: 6*(x-2)
+    m = 3
+    x = []
+    x.append(1) 
+    ea = 1 
     
+    i = 0
+    while ea > 10**-5: 
+        
+        if f(x[i]) != 0: #Raltson and Rabonowitz theoretically demonstrated that f(x) goes to zero faster then f'(x) 
+            x.append(x[i] - m*f(x[i])/f_prime(x[i]))
+        elif f(x[i]) ==0 :
+            x.append(x[i] - m*f(x[i])*(x[i-1] - x[i])/(f(x[i-1]) - f(x[i])))
+            
+                
+        ea = abs((x[i+1] - x[i])/x[i+1])
+        i += 1 
+        print("It took ",i, "iterations to get ", x[-1])    
     
+    plt.plot([n for n in range(len(x))], x, '-o')
+    plt.title("Approximation of the root considering the multiplicicty")
+    plt.xlabel("iteration")
+    plt.ylabel("approximation")
+    plt.grid()
+    plt.show()
+    
+    print("==============================")
+    x = []
+    x.append(1) 
+    ea = 1 
+    
+    i = 0
+    while ea > 10**-5: 
+        
+        if f(x[i]) != 0: #Raltson and Rabonowitz theoretically demonstrated that f(x) goes to zero faster then f'(x) 
+            x.append(x[i] - f(x[i])/f_prime(x[i]))
+        elif f(x[i]) ==0 :
+            x.append(x[i] - f(x[i])*f_prime(x[i])/(f_prime(x[i])**2 - f(x[i])*f_doubleprime(x[i])))
+            
+                
+        ea = abs((x[i+1] - x[i])/x[i+1])
+        i += 1 
+        print("It took ",i, "iterations to get ", x[-1])    
+    
+    plt.plot([n for n in range(len(x))], x, '-o')
+    plt.title("Approximation of the root without considering the multiplicicty")
+    plt.xlabel("iteration")
+    plt.ylabel("approximation")
+    plt.grid()
+    plt.show()
     
