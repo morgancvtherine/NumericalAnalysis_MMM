@@ -1,15 +1,10 @@
+import numpy as np 
 """
-M. Catherine Yopp - 28 April 2022 
-MA 348 - Final Project 
 
-The following code allows the user to find 
-the root(s) of a function with the knowledge 
-of the function's first two derivatives
-and an initial guess. 
 """
 
 ### The following 4 functions are single-iteration root finding methods
-def NR(x, f, f_prime, m): 
+def NR(x, f, f_prime): 
     return x - f(x)/f_prime(x)
     
 def NR_mod(x, f, f_prime, f_doubleprime): 
@@ -34,18 +29,19 @@ def single_root(x0, f, f_prime):
             x.append( NR(x[i],f, f_prime))
         elif f(x[i]) == 0:
             x.append(secant(x[i-1], x[i], f))
+            print("Had to switch to secant")
                  
         ea = abs((x[i+1] - x[i])/x[i+1])
         i += 1
         
     return x 
     
-def multi_root(x0, m, f, f_prime, f_doubleprime): 
+def multi_root(x0, num_of_roots, f, f_prime, f_doubleprime): 
     root = []
     
-    for multi in range(m):
+    for roots in range(num_of_roots):
         x = []
-        x.append(x0[multi]) 
+        x.append(x0[roots]) 
         ea = 1 
         
         i = 0 
@@ -62,29 +58,63 @@ def multi_root(x0, m, f, f_prime, f_doubleprime):
         root.append(x[-1])
         
     return root
+
+def even_multi_root(x0, m, num_of_roots, f, f_prime, f_doubleprime):
+    root = []
+    
+    for roots in range(num_of_roots):
+        x = []
+        x.append(x0[roots]) 
+        ea = 1 
+        
+        i = 0 
+        while ea > 10**-5: 
+            
+            if f(x[i]) != 0: #Raltson and Rabonowitz theoretically demonstrated that f(x) goes to zero faster then f'(x) 
+                x.append(x[i] - m[roots]*f(x[i])/f_prime(x[i]))
+            elif f(x[i]) ==0 :
+                x.append(x[i] - m[roots]*f(x[i])*f_prime(x[i])/(f_prime(x[i])**2 - f(x[i])*f_doubleprime(x[i])))
+            
                 
+            ea = abs((x[i+1] - x[i])/x[i+1])
+            i += 1 
+        root.append(x[-1])
+        
+    return root
+        
+        
 ########################################################################################################################
 if __name__ == "__main__":
     
+    # Example 1: Proof of function 
     '''
     Defining the function and derivative for 
     Leonardo de Pisa's polynomial: 
     $x^3 + 2x^2 + 10x - 20$ 
     whose root is 1.368808107
     '''
-    f1 = lambda x: x**3 + 2*x**2 + 10*x - 20 
-    fp1 = lambda x: 3*x**2 + 4*x + 10
-    fdp1 = lambda x: 6*x + 4
+    f = lambda x: x**3 + 2*x**2 + 10*x - 20 
+    fp = lambda x: 3*x**2 + 4*x + 10
+    fdp = lambda x: 6*x + 4
     
-    pisa_root = single_root(1,f1, fp1)
+    pisa_root = single_root(1,f, fp)
     print(pisa_root[-1])
     
-    # Example 2: Testing of the Multi-root Method 
-    f2 = lambda x: 2*x**2 - 3 
-    fp2 = lambda x: 4*x 
-    fdp2 = lambda x: 4
+    # Example 2: Multiply roots with odd multiplicity 
+    f = lambda x: 2*x**2 - 3 
+    fp = lambda x: 4*x 
+    fdp = lambda x: 4
     
-    roots = multi_root([1,-1], 2, f2, fp2, fdp2)
+    roots = multi_root([1,-1], 2, f, fp, fdp)
     print(roots)
     
-     
+    # Example 3: Even multiplicity
+    f = lambda x: x**4 + 2*x**3 - 3*x**2 - 4*x + 4 
+    fp = lambda x: 4*x**3 + 6*x**2 - 6*x - 4 
+    fdp = lambda x: 12*x**2 + 12*x - 6 
+    even_roots = even_multi_root([-1.88, 1.88, 1.6, -2.3], [2,2, 2, 2], 4, f, fp, fdp)
+    print(even_roots)
+    
+    # Example 4: NR vs NR modified 
+    
+    
