@@ -113,31 +113,9 @@ def single_root(x0, f, f_prime):
         i += 1
         
     return x 
-    
-def odd_multi_root(x0, num_of_roots, f, f_prime, f_doubleprime): 
-    root = []
-    
-    for roots in range(num_of_roots):
-        x = []
-        x.append(x0[roots]) 
-        ea = 1 
-        
-        i = 0 
-        while ea > 10**-5: 
-            
-            if f(x[i]) != 0: #Raltson and Rabonowitz theoretically demonstrated that f(x) goes to zero faster then f'(x) 
-                x.append(NR(x[i],f, f_prime))
-            elif f(x[i]) ==0 :
-                x.append(NR_mod(x[i],f, f_prime, f_doubleprime))
-            
-                
-            ea = abs((x[i+1] - x[i])/x[i+1])
-            i += 1 
-        root.append(x[-1])
-        
-    return root
 
-def even_multi_root(x0, m, num_of_roots, f, f_prime, f_doubleprime):
+
+def multi_root(x0, m, num_of_roots, f, f_prime, f_doubleprime):
     root = []
     
     for roots in range(num_of_roots):
@@ -190,7 +168,7 @@ if __name__ == "__main__":
     fp = lambda x: .5*exp(x) - 5 
     fdp = lambda x: .5*exp(x)
     
-    roots = odd_multi_root([0,2.5], 2, f, fp, fdp)
+    roots = multi_root([0,2.5], [1,1], 2, f, fp, fdp)
     print(roots)
     
     """
@@ -202,7 +180,7 @@ if __name__ == "__main__":
     f = lambda x: x**4 + 2*x**3 - 3*x**2 - 4*x + 4 
     fp = lambda x: 4*x**3 + 6*x**2 - 6*x - 4 
     fdp = lambda x: 12*x**2 + 12*x - 6 
-    even_roots = even_multi_root([-1.88, 1.88, 1.6, -2.3], [2, 2, 2, 2], 4, f, fp, fdp)
+    even_roots = multi_root([-1.88, 1.88, 1.6, -2.3], [2, 2, 2, 2], 4, f, fp, fdp)
     print(even_roots)
      
     """
@@ -216,8 +194,8 @@ if __name__ == "__main__":
     fp = lambda x: 2*x + 5 
     fdp = lambda x: 2
     
-    nr = NR_iters(-1, f, fp)
-    nr_mod = NR_mod_iters(-1, f, fp, fdp)
+    nr = NR_iters(0, f, fp)
+    nr_mod = NR_mod_iters(0, f, fp, fdp)
     
     """
     Example 5: Secant method vs Modified secant method 
