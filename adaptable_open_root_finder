@@ -21,8 +21,7 @@ def secant(x1, x2, f):
     return x2 - f(x2)*(x1 - x2)/(f(x1) - f(x2))
     
 def secant_mod(x1, x2, f, f_prime):
-    return x2 - (f(x2)/f_prime(x2))*(f(x2)*(x1 - x2)/((f(x1)/f_prime(x1)) - (f(x2)/f_prime(x2))))
-
+    return x2 - (f_prime(x2)*(x1 - x2)/(f(x1) - f(x2))) - (f(x2)*(x1 - x2)*(f_prime(x1) - f_prime(x2))/((f(x1) - f(x2))**2))
 """
 The following two functions are multi-iteration and combined root finding methods.
 The stopping condition for the iterations is an error approximation less than 
@@ -185,7 +184,7 @@ if __name__ == "__main__":
      
     """
     Example 4: The mixing of NR modified with secant and 
-               comparing NR modified to NR 
+                comparing NR modified to NR 
               
     $x^2 + 5x + 6.25$
     with root -2.5 
@@ -194,8 +193,26 @@ if __name__ == "__main__":
     fp = lambda x: 2*x + 5 
     fdp = lambda x: 2
     
-    nr = NR_iters(0, f, fp)
-    nr_mod = NR_mod_iters(0, f, fp, fdp)
+    nr = NR_iters(-3, f, fp)
+    nr_mod = NR_mod_iters(-3, f, fp, fdp)
+    
+    fig = plt.figure()
+    plt.plot([n for n in range(len(nr))], nr, '-o')
+    plt.title("Approximation of the root Using Classic Newton-Raphson")
+    plt.xlabel("iteration")
+    plt.ylabel("approximation")
+    plt.grid()
+    plt.show()
+    fig.savefig("classicNR.png")
+    
+    fig = plt.figure()
+    plt.plot([n for n in range(len(nr_mod))], nr_mod, '-o')
+    plt.title("Approximation of the root using Modified Newton-Raphson")
+    plt.xlabel("iteration")
+    plt.ylabel("approximation")
+    plt.grid()
+    plt.show()
+    fig.savefig("modNR.png")
     
     """
     Example 5: Secant method vs Modified secant method 
@@ -230,18 +247,20 @@ if __name__ == "__main__":
             x.append(x[i] - m*f(x[i])/f_prime(x[i]))
         elif f(x[i]) ==0 :
             x.append(x[i] - m*f(x[i])*(x[i-1] - x[i])/(f(x[i-1]) - f(x[i])))
-            
+            print("had to switch to secant method")
                 
         ea = abs((x[i+1] - x[i])/x[i+1])
         i += 1 
         print("It took ",i, "iterations to get ", x[-1])    
     
+    fig = plt.figure()
     plt.plot([n for n in range(len(x))], x, '-o')
     plt.title("Approximation of the root considering the multiplicicty")
     plt.xlabel("iteration")
     plt.ylabel("approximation")
     plt.grid()
     plt.show()
+    fig.savefig("multi_included.png")
     
     print("==============================")
     x = []
@@ -261,10 +280,11 @@ if __name__ == "__main__":
         i += 1 
         print("It took ",i, "iterations to get ", x[-1])    
     
+    fig = plt.figure()
     plt.plot([n for n in range(len(x))], x, '-o')
     plt.title("Approximation of the root without considering the multiplicicty")
     plt.xlabel("iteration")
     plt.ylabel("approximation")
     plt.grid()
     plt.show()
-    
+    fig.savefig("nomulti_included.png")
